@@ -1,8 +1,9 @@
 #ifndef BOARD_H
 #define BOARD_H
+#include "openSpace.h"
 
 struct board{
-    char** boardMatrix; 
+    struct openSpace*** boardMatrix; 
     int width;
     int height;
 };
