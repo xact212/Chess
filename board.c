@@ -5,9 +5,9 @@
 struct board* buildBoard(int width, int height)
 {
     struct board* myBoard = malloc(sizeof(struct board));
-    myBoard->boardMatrix = (int**)malloc(width * sizeof(int*)); //make array of int pointers
+    myBoard->boardMatrix = (char**)malloc(width * sizeof(char*)); //make array of char pointers
     for (int i = 0; i < height; i++)
-        myBoard->boardMatrix[i] = (int*)malloc(height * sizeof(int)); //make array of ints
+        myBoard->boardMatrix[i] = (char*)malloc(height * sizeof(char)); //make array of chars
     myBoard->width = width;
     myBoard->height = height;
     return myBoard;
@@ -23,8 +23,7 @@ void initBoardMatrix(struct board* board)
         for (int j = 0; j < board->height; j++)
         {
             printf("j: %i ", j);
-            //if (board->boardMatrix[i][j] != NULL)
-            board->boardMatrix[i][j] = 0;
+            board->boardMatrix[i][j] = '0';
         }
     }
 }
@@ -38,7 +37,7 @@ void printBoard(struct board* board)
     {
         for (int j = 0; j < board->height; j++)
         {
-            printf("%i ", board->boardMatrix[i][j]);
+            printf("%c ", board->boardMatrix[i][j]);
         }
         printf("\n");
     }

@@ -2,7 +2,7 @@
 #define BOARD_H
 
 struct board{
-    int** boardMatrix; 
+    char** boardMatrix; 
     int width;
     int height;
 };
