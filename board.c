@@ -1,5 +1,6 @@
 #include "board.h"
 #include "openSpace.h"
+#include "pawn.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -23,7 +24,7 @@ void initBoardMatrix(board* board)
     {
         for (int j = 0; j < board->height; j++)
         {
-            board->boardMatrix[i][j] = buildOpenSpace(); //initialize board by typcasting each void* to an openSpace struct
+            board->boardMatrix[i][j] = (pawn*) buildPawn(); //initialize board by typcasting each void* to an openSpace struct
             //printf("%i %i %i %i\n", sizeof(board->boardMatrix[i][j]), sizeof(board->boardMatrix[i][j]->moves), i, j);
         }
     }
