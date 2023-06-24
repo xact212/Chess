@@ -4,12 +4,13 @@
 #include <stdbool.h>
 
 
-struct pawn* buildPawn()
+pawn* buildPawn()
 {
-    struct pawn* myPawn = malloc(sizeof(struct pawn));
+    pawn* myPawn = malloc(sizeof(pawn));
     myPawn->display = 'p';
-    struct coordinate* moves[2] = {buildCoordinate(0, 1), buildCoordinate(0, 2)};
+    coordinate* moves[2] = {buildCoordinate(0, 1), buildCoordinate(0, 2)};
     myPawn->moves = moves; //can move up one or two, depends on hasBeenmoved variable for move 2
     myPawn->hasBeenMoved = false;
     return myPawn;
 }
+

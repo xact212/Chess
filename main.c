@@ -5,7 +5,7 @@
 
 int main()
 {
-    struct board* mainBoard = buildBoard(8, 8);
+    board* mainBoard = buildBoard(8, 8);
     initBoardMatrix(mainBoard);
     printBoard(mainBoard);
     freeBoard(mainBoard);

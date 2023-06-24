@@ -1,10 +1,10 @@
 #ifndef GAME_H
 #define GAME_H
 
-struct coordinate{
+typedef struct{
     int x;
     int y;
-};
+}coordinate;
 
-struct coordinate* buildCoordinate(int x, int y);
+coordinate* buildCoordinate(int x, int y);
 #endif

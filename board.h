@@ -2,17 +2,17 @@
 #define BOARD_H
 #include "openSpace.h"
 
-struct board{
-    struct openSpace*** boardMatrix; 
+typedef struct{
+    openSpace*** boardMatrix; 
     int width;
     int height;
-};
+}board;
 
-struct board* buildBoard(int width, int height);
+board* buildBoard(int width, int height);
 
-void printBoard(struct board* board);
+void printBoard(board* board);
 
-void initBoardMatrix(struct board* board);
+void initBoardMatrix(board* board);
 
-void freeBoard(struct board* board);
+void freeBoard(board* board);
 #endif

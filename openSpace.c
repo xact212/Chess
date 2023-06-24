@@ -1,11 +1,19 @@
 #include "openSpace.h"
 #include "game.h"
 #include <stdlib.h>
-struct openSpace* buildOpenSpace()
+
+openSpace* buildOpenSpace()
 {
-    struct openSpace* myOpenSpace = malloc(sizeof(struct openSpace));
+    openSpace* myOpenSpace = malloc(sizeof(openSpace*) * 2);
+    //openSpace* myOpenSpace;
     myOpenSpace->display = 'X';
-    struct coordinate moves[0] = {};
+    coordinate** moves = malloc(sizeof(coordinate**));
     myOpenSpace->moves = moves;
     return myOpenSpace;
+}
+
+void freeOpenSpace(openSpace* openSpace)
+{
+    free(openSpace->moves);
+    free(openSpace);
 }

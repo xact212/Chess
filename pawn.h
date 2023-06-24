@@ -1,13 +1,14 @@
 #ifndef PAWN_H
 #define PAWN_H
+#include "game.h"
 #include <stdbool.h>
 
-struct pawn {
+typedef struct {
     char display;
-    struct coordinate** moves; //array of coordinates represents each valid move disregarding obstacles
+    coordinate** moves; //array of coordinates represents each valid move disregarding obstacles
     bool hasBeenMoved;
-};
+}pawn;
 
-struct pawn* buildPawn();
+pawn* buildPawn();
 
 #endif

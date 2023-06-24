@@ -2,10 +2,12 @@
 #define OPENSPACE_H
 #include "game.h"
 
-struct openSpace{
+typedef struct{
     char display;
-    struct coordinate* moves;
-};
+    coordinate** moves;
+}openSpace;
 
-struct openSpace* buildOpenSpace();
+openSpace* buildOpenSpace();
+
+void freeOpenSpace(openSpace* openSpace);
 #endif
