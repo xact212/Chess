@@ -12,7 +12,7 @@ board* buildBoard(int width, int height);
 
 void printBoard(board* board);
 
-void initBoardMatrix(board* board);
+void initBoardMatrix(board* board, char side);
 
 void freeBoard(board* board);
 #endif

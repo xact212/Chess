@@ -16,16 +16,13 @@ board* buildBoard(int width, int height)
     return myBoard;
 }
 
-void initBoardMatrix(board* board)
+void initBoardMatrix(board* board, char side)
 {
-    //printf("Size of board matrix: %i\n", sizeof(board));
-    //printf("Size of all allocated open space pointers: %i\n", sizeof(openSpace*) * board->width * board->height);
     for (int i = 0; i < board->width; i++)
     {
         for (int j = 0; j < board->height; j++)
         {
-            board->boardMatrix[i][j] = (pawn*) buildPawn(); //initialize board by typcasting each void* to an openSpace struct
-            //printf("%i %i %i %i\n", sizeof(board->boardMatrix[i][j]), sizeof(board->boardMatrix[i][j]->moves), i, j);
+            board->boardMatrix[i][j] = buildOpenSpace(side); //initialize board by building an open space at every square
         }
     }
 }

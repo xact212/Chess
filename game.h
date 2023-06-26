@@ -1,10 +1,6 @@
 #ifndef GAME_H
 #define GAME_H
+#include "board.h"
 
-typedef struct{
-    int x;
-    int y;
-}coordinate;
-
-coordinate* buildCoordinate(int x, int y);
+void gameLoop(char startingSide, board* mainBoard);
 #endif
