@@ -1,3 +1,4 @@
+#include "pawn.h"
 #include "game.h"
 #include "board.h"
 #include "coordinate.h"
@@ -74,6 +75,16 @@ void gameLoop(char startingSide, board* mainBoard)
             } 
         }
         
+        //check if check blocks move
+        //check all special cases
+
+        //carry out move
+        freeOpenSpace(mainBoard->boardMatrix[second->x][second->y]); //delete whatever destination used to be
+        //mainBoard->boardMatrix[second->x][second->y] = (openSpace*) buildOpenSpace('n'); //make destination open space so there are no casting issues
+        mainBoard->boardMatrix[second->x][second->y] = buildPawn('w'); //overwrite destination with the piece at original destination
+        freeOpenSpace(mainBoard->boardMatrix[first->x][first->y]); //delete and overwrite origin with open space;
+        mainBoard->boardMatrix[first->x][first->y] = (openSpace*) buildOpenSpace('n'); 
+        printBoard(mainBoard);
     //}
     free(first);
     free(second);

@@ -7,8 +7,8 @@ int main()
 {
     board* mainBoard = buildBoard(8, 8);
     initBoardMatrix(mainBoard, 'n');
-    freeOpenSpace(mainBoard->boardMatrix[5][5]);
-    mainBoard->boardMatrix[5][5] = buildPawn('w');
+    freeOpenSpace(mainBoard->boardMatrix[4][5]);
+    mainBoard->boardMatrix[4][5] = buildPawn('w');
     printBoard(mainBoard);
     gameLoop('w', mainBoard);
     freeBoard(mainBoard);

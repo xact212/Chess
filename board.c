@@ -33,7 +33,7 @@ void printBoard(board* board)
     {
         for (int j = 0; j < board->height; j++)
         {
-            printf("%c ", board->boardMatrix[i][j]->display);
+            printf("%c ", board->boardMatrix[j][i]->display);
         }
         printf("\n");
     }
