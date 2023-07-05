@@ -1,4 +1,4 @@
-cc=gcc -std=c99
+cc=gcc -std=c99 -g
 exe=chess
 
 $(exe) : pawn.o board.o openSpace.o game.o coordinate.o main.c 
