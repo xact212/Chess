@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 
 board* buildBoard(int width, int height)
 {
@@ -73,9 +74,16 @@ void buildPiece(board* board, char *piece, int x, int y, char side) //allows eac
         board->boardMatrix[x][y] = buildPawn(side);
         return;
     }
-    else
+    else if (strcmp(piece, "openSpace") == 0)
     {
         board->boardMatrix[x][y] = buildOpenSpace(side);
         return;
     }
+    else    
+    {
+        printf("No piece specified, creating open space");
+        board->boardMatrix[x][y] = buildOpenSpace(side);
+        return;
+    }
 }
+

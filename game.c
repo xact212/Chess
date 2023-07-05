@@ -49,11 +49,13 @@ void gameLoop(char startingSide, board* mainBoard)
     coordinate* whiteFirstMoves[6] = {buildCoordinate(0, 2), buildCoordinate(1, 2), buildCoordinate(1,1), buildCoordinate(1,0), buildCoordinate(-1,1), buildCoordinate(0,1)}; 
     coordinate* blackFirstMoves[6] = {buildCoordinate(0, -2), buildCoordinate(-1, -2), buildCoordinate(-1,-1), buildCoordinate(-1,0), buildCoordinate(1,-1), buildCoordinate(0,-1)}; //pawn, knight, bishop, rook, queen, king
     char side = startingSide; //setup starting conditions
-    char input[999] = "0000000000"; //reason for large number is to prevent buffer overflow
+    char* currentPiece = "pawn";
+    char input[1024] = "0000000000"; //reason for large number is to prevent buffer overflow
     coordinate* first = buildCoordinate(0, 0);
     coordinate* second = buildCoordinate(0, 0);
     coordinate* move = buildCoordinate(0, 0);
     bool moveValid = false;
+    bool currentBeenMoved = true;
     while (true)
     {
         moveValid = false;
@@ -94,9 +96,9 @@ void gameLoop(char startingSide, board* mainBoard)
         move->x = second->x - first->x;
         move->y = second->y - first->y;
         
-        if(check(movesList[0] == NULL, "Trying to move open space", ""))
+        if(check(movesList[0] != NULL, "", "Trying to move open space"))
         {
-            for (int i = 0; i < (sizeof(movesList) / sizeof(coordinate*) + 1); i++)
+            for (int i = 0; i <= (sizeof(movesList) / sizeof(coordinate*)); i++)
             {
                 if (move->x == movesList[i]->x && move->y == movesList[i]->y)
                 {
@@ -130,14 +132,16 @@ void gameLoop(char startingSide, board* mainBoard)
         //pawn move 2 vs 1
         if ((movesList[0]->x == 0 && movesList[0]->y == 1) || ((movesList[0]->x == 0 && movesList[0]->y == -1))) //is pawn
         {
-            if ((mainBoard->boardMatrix[first->x][first->y]->hasBeenMoved == true && ((move->x == 0 && move->y == 2) || (move->x == 0 && move->y == -2)))) //if has been moved and is trying to move 2 spaces
+            printf("Piece is pawn\n");
+            printf("Has been moved: %i\n", mainBoard->boardMatrix[first->x][first->y]->hasBeenMoved);
+            if ((mainBoard->boardMatrix[first->x][first->y]->hasBeenMoved && ((move->x == 0 && move->y == 2) || (move->x == 0 && move->y == -2)))) //if has been moved and is trying to move 2 spaces
             {
-                printf("Trying to move pawn that has already been moved 2 spaces 2 spaces again");
+                printf("Trying to move pawn that has already been moved 2 spaces 2 spaces again\n");
                 continue;
             }
-                
-            else
+            else if ((move->y != 1 && move->y != -1))
             {
+                printf("Pawn has moved 2 spaces, cannot move 2 spaces again\n");
                 mainBoard->boardMatrix[first->x][first->y]->hasBeenMoved = true; //if hasn't made move before, set it so the pawn cant make it again
             }    
         }
@@ -149,11 +153,15 @@ void gameLoop(char startingSide, board* mainBoard)
         //code to move a piece should also work for captures
 
         //carry out move
-        freeOpenSpace(mainBoard->boardMatrix[second->x][second->y]); //delete whatever destination used to be
-        //mainBoard->boardMatrix[second->x][second->y] = (openSpace*) buildOpenSpace('n'); //make destination open space so there are no casting issues
-        mainBoard->boardMatrix[second->x][second->y] = buildPawn('w'); //overwrite destination with the piece at original destination
-        freeOpenSpace(mainBoard->boardMatrix[first->x][first->y]); //delete and overwrite origin with open space;
-        mainBoard->boardMatrix[first->x][first->y] = (openSpace*) buildOpenSpace('n'); 
+        if ((movesList[0]->x == 0 && movesList[0]->y == 1) || ((movesList[0]->x == 0 && movesList[0]->y == -1))) //is pawn
+        {
+            currentPiece = "pawn";
+            currentBeenMoved = mainBoard->boardMatrix[first->x][first->y]->hasBeenMoved;
+        }
+            
+        buildPiece(mainBoard, currentPiece, second->x, second->y, mainBoard->boardMatrix[first->x][first->y]->side); //overwrite destination with the piece at original position
+        mainBoard->boardMatrix[second->x][second->y]->hasBeenMoved = currentBeenMoved; //for pawn to check if has moved twice
+        buildPiece(mainBoard, "openSpace", first->x, first->y, 'n');
         printBoard(mainBoard);
     
         //change side
@@ -162,7 +170,7 @@ void gameLoop(char startingSide, board* mainBoard)
         else
             side = 'w';
     }
-    for (int i = 0; i < (sizeof(whiteFirstMoves) / sizeof(coordinate*)); i++)
+    for (int i = 0; i < (sizeof(whiteFirstMoves) / sizeof(coordinate*)); i++) //free all allocations
         free(whiteFirstMoves[i]);
     for (int i = 0; i < (sizeof(blackFirstMoves) / sizeof(coordinate*)); i++)
         free(blackFirstMoves[i]);

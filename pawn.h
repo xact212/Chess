@@ -13,4 +13,5 @@ typedef struct pawn{
 
 pawn* buildPawn(char side);
 
+void setHasBeenMoved(pawn* pawn);
 #endif

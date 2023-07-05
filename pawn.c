@@ -25,3 +25,4 @@ pawn* buildPawn(char side)
     myPawn->moves = moves; //can move up one or two, depends on hasBeenmoved variable for move 2
     return myPawn;
 }
+
