@@ -7,8 +7,9 @@
 typedef struct openSpace{
     char display;
     char side;
-    coordinate** moves;
     bool hasBeenMoved;
+    int movesLen;
+    coordinate** moves;
 }openSpace;
 
 openSpace* buildOpenSpace(char side);

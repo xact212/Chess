@@ -45,9 +45,6 @@ bool checkInputSyntax(char* input)
 
 void gameLoop(char startingSide, board* mainBoard)
 {
-    //pawn, knight, bishop, rook, queen, king
-    coordinate* whiteFirstMoves[6] = {buildCoordinate(0, 2), buildCoordinate(1, 2), buildCoordinate(1,1), buildCoordinate(1,0), buildCoordinate(-1,1), buildCoordinate(0,1)}; 
-    coordinate* blackFirstMoves[6] = {buildCoordinate(0, -2), buildCoordinate(-1, -2), buildCoordinate(-1,-1), buildCoordinate(-1,0), buildCoordinate(1,-1), buildCoordinate(0,-1)}; //pawn, knight, bishop, rook, queen, king
     char side = startingSide; //setup starting conditions
     char* currentPiece = "pawn";
     char input[1024] = "0000000000"; //reason for large number is to prevent buffer overflow
@@ -98,8 +95,9 @@ void gameLoop(char startingSide, board* mainBoard)
         
         if(check(movesList[0] != NULL, "", "Trying to move open space"))
         {
-            for (int i = 0; i <= (sizeof(movesList) / sizeof(coordinate*)); i++)
+            for (int i = 0; i < mainBoard->boardMatrix[first->x][first->y]->movesLen; i++)
             {
+                //printf("Move: %i X: %i Y: %i\n", i, movesList[i]->x, movesList[i]->y);
                 if (move->x == movesList[i]->x && move->y == movesList[i]->y)
                 {
                     printf("Move is in moves list for specified piece\n");
@@ -132,25 +130,28 @@ void gameLoop(char startingSide, board* mainBoard)
         //pawn move 2 vs 1
         if ((movesList[0]->x == 0 && movesList[0]->y == 1) || ((movesList[0]->x == 0 && movesList[0]->y == -1))) //is pawn
         {
-            printf("Piece is pawn\n");
-            printf("Has been moved: %i\n", mainBoard->boardMatrix[first->x][first->y]->hasBeenMoved);
-            if ((mainBoard->boardMatrix[first->x][first->y]->hasBeenMoved && ((move->x == 0 && move->y == 2) || (move->x == 0 && move->y == -2)))) //if has been moved and is trying to move 2 spaces
+            if ((mainBoard->boardMatrix[first->x][first->y]->hasBeenMoved && (move->y == 2 || move->y == -2))) //if has been moved and is trying to move 2 spaces
             {
-                printf("Trying to move pawn that has already been moved 2 spaces 2 spaces again\n");
                 continue;
             }
-            else if ((move->y != 1 && move->y != -1))
+            else
             {
-                printf("Pawn has moved 2 spaces, cannot move 2 spaces again\n");
                 mainBoard->boardMatrix[first->x][first->y]->hasBeenMoved = true; //if hasn't made move before, set it so the pawn cant make it again
             }    
+            //capturing
+            //code to move a piece should also work for captures, unless piece is a pawn or king
+            //if piece we are moving into is not an open space, and we are using our non capture moves, move is invalid
+            if (move->x == 0 && mainBoard->boardMatrix[second->x][second->y]->side != 'n')
+            {
+                    printf("Trying to capture with non-capture move\n");
+                    continue;
+            }
         }
         //en passant
         //promotion
         //pawns (is first move for 2 space, has enemy diagonal for captures)
 
-        //capturing
-        //code to move a piece should also work for captures
+        
 
         //carry out move
         if ((movesList[0]->x == 0 && movesList[0]->y == 1) || ((movesList[0]->x == 0 && movesList[0]->y == -1))) //is pawn
@@ -170,10 +171,6 @@ void gameLoop(char startingSide, board* mainBoard)
         else
             side = 'w';
     }
-    for (int i = 0; i < (sizeof(whiteFirstMoves) / sizeof(coordinate*)); i++) //free all allocations
-        free(whiteFirstMoves[i]);
-    for (int i = 0; i < (sizeof(blackFirstMoves) / sizeof(coordinate*)); i++)
-        free(blackFirstMoves[i]);
     free(first);
     free(second);
     free(move);

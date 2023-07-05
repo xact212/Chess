@@ -8,6 +8,7 @@ openSpace* buildOpenSpace(char side)
     openSpace* myOpenSpace = malloc(sizeof(openSpace*) * 3);
     myOpenSpace->display = 'X';
     myOpenSpace->side = side;
+    myOpenSpace->movesLen = 0;
     coordinate** moves = malloc(sizeof(coordinate*));
     moves[0] = NULL;
     myOpenSpace->moves = moves;

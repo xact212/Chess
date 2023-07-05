@@ -7,11 +7,11 @@
 typedef struct pawn{
     char display;
     char side;
-    coordinate** moves; //array of coordinates represents each valid move disregarding obstacles
     bool hasBeenMoved;
+    int movesLen;
+    coordinate** moves; //array of coordinates represents each valid move disregarding obstacles
 }pawn;
 
 pawn* buildPawn(char side);
 
-void setHasBeenMoved(pawn* pawn);
 #endif
