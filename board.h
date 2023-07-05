@@ -1,17 +1,20 @@
 #ifndef BOARD_H
 #define BOARD_H
+#include "openSpace.h"
 
-struct board{
-    char** boardMatrix; 
+typedef struct board{
+    openSpace*** boardMatrix; 
     int width;
     int height;
-};
+}board;
 
-struct board* buildBoard(int width, int height);
+board* buildBoard(int width, int height);
 
-void printBoard(struct board* board);
+void printBoard(board* board);
 
-void initBoardMatrix(struct board* board);
+void initBoardMatrix(board* board, char side);
 
-void freeBoard(struct board* board);
+void freeBoard(board* board);
+
+void buildPiece(board* board, char *piece, int x, int y, char side);
 #endif
