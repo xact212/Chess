@@ -15,15 +15,15 @@ pawn* buildPawn(char side)
     coordinate** moves = malloc(4 * sizeof(coordinate*));
     if (side == 'w')
     {
-        moves[0] = buildCoordinate(0,1);
-        moves[1] = buildCoordinate(0,2);
+        moves[0] = buildCoordinate(0,2);
+        moves[1] = buildCoordinate(0,1);
         moves[2] = buildCoordinate(-1,1);
         moves[3] = buildCoordinate(1,1);
     }
     else if (side == 'b')
     {
-        moves[0] = buildCoordinate(0,-1);
-        moves[1] = buildCoordinate(0,-2);
+        moves[0] = buildCoordinate(0,-2);
+        moves[1] = buildCoordinate(0,-1);
         moves[2] = buildCoordinate(-1,-1);
         moves[3] = buildCoordinate(1,-1);
     }

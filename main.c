@@ -11,6 +11,7 @@ int main()
     buildPiece(mainBoard, "pawn", 4, 5, 'b');
     buildPiece(mainBoard, "pawn", 5, 5, 'b');
     buildPiece(mainBoard, "pawn", 2, 7, 'b');
+    buildPiece(mainBoard, "king", 6, 6, 'w');
     printBoard(mainBoard);
     gameLoop('w', mainBoard);
     freeBoard(mainBoard);

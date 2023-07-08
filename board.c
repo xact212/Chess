@@ -1,10 +1,12 @@
 #include "board.h"
 #include "openSpace.h"
 #include "pawn.h"
+#include "king.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+
 
 board* buildBoard(int width, int height)
 {
@@ -35,10 +37,15 @@ void printBoard(board* board)
     {
         for (int j = 0; j < board->height; j++)
         {
+            if (j == 0)
+            {
+                printf("%i ", i + 1);
+            }
             printf("%c%c ",board->boardMatrix[j][i]->side, board->boardMatrix[j][i]->display);
         }
         printf("\n");
     }
+    printf("   1  2  3  4  5  6  7  8\n");
 }
 
 void freeBoard(board* board)
@@ -78,6 +85,10 @@ void buildPiece(board* board, char *piece, int x, int y, char side) //allows eac
     {
         board->boardMatrix[x][y] = buildOpenSpace(side);
         return;
+    }
+    else if (strcmp(piece, "king") == 0)
+    {
+        board->boardMatrix[x][y] = buildKing(side);
     }
     else    
     {

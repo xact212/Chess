@@ -97,11 +97,12 @@ void gameLoop(char startingSide, board* mainBoard)
         {
             for (int i = 0; i < mainBoard->boardMatrix[first->x][first->y]->movesLen; i++)
             {
-                //printf("Move: %i X: %i Y: %i\n", i, movesList[i]->x, movesList[i]->y);
+                printf("Move: %i X: %i Y: %i\n", i, movesList[i]->x, movesList[i]->y);
                 if (move->x == movesList[i]->x && move->y == movesList[i]->y)
                 {
                     printf("Move is in moves list for specified piece\n");
                     moveValid = true;
+                    break;
                 }
             } 
         }
@@ -128,7 +129,7 @@ void gameLoop(char startingSide, board* mainBoard)
 
         //castling
         //pawn move 2 vs 1
-        if ((movesList[0]->x == 0 && movesList[0]->y == 1) || ((movesList[0]->x == 0 && movesList[0]->y == -1))) //is pawn
+        if ((movesList[0]->x == 0 && movesList[0]->y == 2) || ((movesList[0]->x == 0 && movesList[0]->y == -2))) //is pawn
         {
             if ((mainBoard->boardMatrix[first->x][first->y]->hasBeenMoved && (move->y == 2 || move->y == -2))) //if has been moved and is trying to move 2 spaces
             {
@@ -146,17 +147,25 @@ void gameLoop(char startingSide, board* mainBoard)
                     printf("Trying to capture with non-capture move\n");
                     continue;
             }
+            if ((move->x == 1 || move->x == -1) && mainBoard->boardMatrix[second->x][second->y]->moves[0] == NULL)
+            {
+                printf("Trying to capture open space\n");
+                continue;   
+            }
         }
         //en passant
         //promotion
         //pawns (is first move for 2 space, has enemy diagonal for captures)
 
-        
-
         //carry out move
-        if ((movesList[0]->x == 0 && movesList[0]->y == 1) || ((movesList[0]->x == 0 && movesList[0]->y == -1))) //is pawn
+        if ((movesList[0]->x == 0 && movesList[0]->y == 2) || ((movesList[0]->x == 0 && movesList[0]->y == -2))) //is pawn
         {
             currentPiece = "pawn";
+            currentBeenMoved = mainBoard->boardMatrix[first->x][first->y]->hasBeenMoved;
+        }
+        if (movesList[0]->x == 0 && movesList[0]->y == -1) //is king
+        {
+            currentPiece = "king";
             currentBeenMoved = mainBoard->boardMatrix[first->x][first->y]->hasBeenMoved;
         }
             
