@@ -73,20 +73,20 @@ void freeBoard(board* board)
     }
 }
 
-void buildPiece(board* board, char *piece, int x, int y, char side) //allows each piece's data to be properly accessed externally
+void buildPiece(board* board, char piece, int x, int y, char side) //allows each piece's data to be properly accessed externally
 {
     freeOpenSpace(board->boardMatrix[x][y]);
-    if (strcmp(piece, "pawn") == 0)
+    if (piece == 'p')
     {
         board->boardMatrix[x][y] = buildPawn(side);
         return;
     }
-    else if (strcmp(piece, "openSpace") == 0)
+    else if (piece == 'X')
     {
         board->boardMatrix[x][y] = buildOpenSpace(side);
         return;
     }
-    else if (strcmp(piece, "king") == 0)
+    else if (piece == 'k')
     {
         board->boardMatrix[x][y] = buildKing(side);
     }
