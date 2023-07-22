@@ -82,7 +82,6 @@ bool moveCausesCheck(coordinate* first, coordinate* second, board* board, char c
                 //need to account for special case if a pawn, non capturing moves do no count for check
                 if (board->boardMatrix[i][j]->display == 'p') //if pawn, only use last two moves in the moves list becasue these are its capture moves
                 {
-                    printf("i: %i j: %i\n", i, j);
                     captureList[0]->x = board->boardMatrix[i][j]->moves[2]->x;
                     captureList[0]->y = board->boardMatrix[i][j]->moves[2]->y;
                     captureList[1]->x = board->boardMatrix[i][j]->moves[3]->x;
@@ -95,12 +94,15 @@ bool moveCausesCheck(coordinate* first, coordinate* second, board* board, char c
                         captureList[move]->y = board->boardMatrix[i][j]->moves[move]->y;
                     }
                 }
+                printf("i: %i j: %i\n", i, j);
                 //loop through capture list and check if it has a move that could capture your king
                 for (int move = 0; move < board->boardMatrix[i][j]->movesLen; move++)
                 {
                     currMoveX = i + captureList[move]->x; //set hypothetical move relative to current piece position
                     currMoveY = j + captureList[move]->y;
                     //if current side's king is in check now, we need to undo the move and return true
+                    printf("Move: %i X: %i Y: %i\n", move, captureList[move]->x, captureList[move]->y);
+                    if (currMoveX < 0 || currMoveX > 7 || currMoveY < 0 || currMoveY > 7) {continue;}
                     if (board->boardMatrix[currMoveX][currMoveY]->display == 'k' && board->boardMatrix[currMoveX][currMoveY]->side == currentSide) 
                     {
                         makeMove(second, first, board, currentBeenMoved); //move whatever is at destination square back
@@ -240,7 +242,7 @@ void gameLoop(char startingSide, board* mainBoard)
         {
             continue;
         }
-                    
+
         printBoard(mainBoard);
 
         //change side

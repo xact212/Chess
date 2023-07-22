@@ -2,6 +2,7 @@
 #include "openSpace.h"
 #include "pawn.h"
 #include "king.h"
+#include "rook.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -76,22 +77,21 @@ void freeBoard(board* board)
 void buildPiece(board* board, char piece, int x, int y, char side) //allows each piece's data to be properly accessed externally
 {
     freeOpenSpace(board->boardMatrix[x][y]);
-    if (piece == 'p')
-    {
+    if (piece == 'p') {
         board->boardMatrix[x][y] = buildPawn(side);
         return;
     }
-    else if (piece == 'X')
-    {
+    else if (piece == 'X') {
         board->boardMatrix[x][y] = buildOpenSpace(side);
         return;
     }
-    else if (piece == 'k')
-    {
+    else if (piece == 'k') {
         board->boardMatrix[x][y] = buildKing(side);
     }
-    else    
-    {
+    else if (piece == 'r') {
+        board->boardMatrix[x][y] = buildRook(side);
+    } 
+    else {
         printf("No piece specified, creating open space");
         board->boardMatrix[x][y] = buildOpenSpace(side);
         return;
