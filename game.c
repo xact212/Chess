@@ -47,21 +47,28 @@ void makeMove(coordinate* first, coordinate* second, board* board, bool currentB
     buildPiece(board, board->boardMatrix[first->x][first->y]->display, second->x, second->y, board->boardMatrix[first->x][first->y]->side); //overwrite destination with the piece at original position
     board->boardMatrix[second->x][second->y]->hasBeenMoved = currentBeenMoved; //for pawn to check if has moved twice
     buildPiece(board, 'X', first->x, first->y, 'n');
-    printBoard(board);
+    //printBoard(board);
 }
-
+/*
+This fucntion is designed to check if any given move you make will put your own king in check.
+The general idea of this function is as follows:
+1. make the move
+2. make sure there is no opposing piece that is now attacking your king
+3. if there is undo the move
+*/
 bool moveCausesCheck(coordinate* first, coordinate* second, board* board, char currentSide, bool currentBeenMoved)
 {
     //assume all other checks have been made first, always put this last in checking order
     //make move
-    coordinate** captureList = NULL;
+    coordinate* captureList[50];
+    for (int i = 0; i < 50; i++) {captureList[i] = buildCoordinate(0,0);}
     int currMoveX = 0;
     int currMoveY = 0;
     //need to know this information so we can undo the move if needed
     bool secondhasBeenMoved = board->boardMatrix[second->x][second->y]->hasBeenMoved; 
     char secondDisplay = board->boardMatrix[second->x][second->y]->display;
     char secondSide = board->boardMatrix[second->x][second->y]->side;
-    makeMove(first, second, board, currentBeenMoved);
+    makeMove(first, second, board, currentBeenMoved); //make move, undo as neccesary
     //loop through every single piece 
     for (int i = 0; i < board->width; i++)
     {
@@ -73,27 +80,34 @@ bool moveCausesCheck(coordinate* first, coordinate* second, board* board, char c
             if (board->boardMatrix[i][j]->side != currentSide && board->boardMatrix[i][j]->side != 'n') //if not oppoosite side we don't care about its moves
             {
                 //need to account for special case if a pawn, non capturing moves do no count for check
-                if (board->boardMatrix[i][j]->side == 'p') //if pawn, only use last two moves in the moves list becasue these are its capture moves
+                if (board->boardMatrix[i][j]->display == 'p') //if pawn, only use last two moves in the moves list becasue these are its capture moves
                 {
-                    captureList[0] = board->boardMatrix[i][j]->moves[2];
-                    captureList[1] = board->boardMatrix[i][j]->moves[3];
+                    printf("i: %i j: %i\n", i, j);
+                    captureList[0]->x = board->boardMatrix[i][j]->moves[2]->x;
+                    captureList[0]->y = board->boardMatrix[i][j]->moves[2]->y;
+                    captureList[1]->x = board->boardMatrix[i][j]->moves[3]->x;
+                    captureList[1]->y = board->boardMatrix[i][j]->moves[3]->y;
                 }
                 else //every other piece can capture with any move
                 {
-                    captureList = board->boardMatrix[i][j]->moves;
+                    for (int move = 0; move < board->boardMatrix[i][j]->movesLen; move++) {
+                        captureList[move]->x = board->boardMatrix[i][j]->moves[move]->x;
+                        captureList[move]->y = board->boardMatrix[i][j]->moves[move]->y;
+                    }
                 }
                 //loop through capture list and check if it has a move that could capture your king
                 for (int move = 0; move < board->boardMatrix[i][j]->movesLen; move++)
                 {
                     currMoveX = i + captureList[move]->x; //set hypothetical move relative to current piece position
                     currMoveY = j + captureList[move]->y;
-                    //if current side's king is in check now, we need to undo the move and return false
+                    //if current side's king is in check now, we need to undo the move and return true
                     if (board->boardMatrix[currMoveX][currMoveY]->display == 'k' && board->boardMatrix[currMoveX][currMoveY]->side == currentSide) 
                     {
                         makeMove(second, first, board, currentBeenMoved); //move whatever is at destination square back
                         buildPiece(board, secondDisplay, second->x, second->y, secondSide); //make copy of what used to be at second at second square again
                         board->boardMatrix[second->x][second->y]->hasBeenMoved = secondhasBeenMoved;
-                        printf("Move results in your king being in check\n");
+                        for (int space = 0; space < 50; space++){free(captureList[space]);}
+                        printf("Move puts king in check\n");
                         return true;
                     }
                 }
@@ -101,6 +115,8 @@ bool moveCausesCheck(coordinate* first, coordinate* second, board* board, char c
             
         }
     }
+    for (int space = 0; space < 50; space++){free(captureList[space]);}
+    printf("Move does not put king in check\n");
     return false; //if we get to the end without problem we can safely return false
 }
 
@@ -220,14 +236,13 @@ void gameLoop(char startingSide, board* mainBoard)
         //pawns (is first move for 2 space, has enemy diagonal for captures)
         
         //see if check prevents move
-        if (moveCausesCheck(first, second, mainBoard, side, mainBoard->boardMatrix[first->x][first->y]->hasBeenMoved)); 
+        if (moveCausesCheck(first, second, mainBoard, side, mainBoard->boardMatrix[first->x][first->y]->hasBeenMoved))
         {
             continue;
         }
-        //carry out move
-            
-        makeMove(first, second, mainBoard, currentBeenMoved);
-    
+                    
+        printBoard(mainBoard);
+
         //change side
         if (side == 'w')
             side = 'b';
