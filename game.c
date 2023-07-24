@@ -49,6 +49,43 @@ void makeMove(coordinate* first, coordinate* second, board* board, bool currentB
     buildPiece(board, 'X', first->x, first->y, 'n');
     //printBoard(board);
 }
+
+bool sideInCheck(board* board, char side)  {
+    coordinate* first = buildCoordinate(0,0);
+    coordinate* second = buildCoordinate(0,0);
+    char oppositeSide = (side == 'w') ? 'b':'w';
+    //loop through every piece on board
+    for (int i = 0; i < board->width; i++) {
+        for (int j = 0; j < board->height; j++) {
+            //if opposing side loop through each of their moves
+            if (board->boardMatrix[i][j]->side == oppositeSide) {
+                first->x = i;
+                first->y = j;
+                for (int move = 0; move < board->boardMatrix[i][j]->movesLen; move++) {
+                    second->x = first->x + board->boardMatrix[i][j]->moves[move]->x;
+                    second->y = first->y + board->boardMatrix[i][j]->moves[move]->y;
+                    if (second->x < 0 || second->x > 7 || second->y < 0 || second->y > 7) {continue;}
+                    //see if each move puts your current king in check
+                    bool isKing = board->boardMatrix[second->x][second->y]->display == 'k';
+                    bool isCurrSide = board->boardMatrix[second->x][second->y]->side == side;
+                    bool kingInCheck = isKing && isCurrSide;
+                    if (kingInCheck) {
+                        printf("Side :%c is in check\n", side);
+                        free(first);
+                        free(second);
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    //if none of them do, we are not in check
+    printf("Side :%c is not in check\n", side);
+    free(first);
+    free(second);
+    return false;
+}
+
 /*
 This fucntion is designed to check if any given move you make will put your own king in check.
 The general idea of this function is as follows:
@@ -135,6 +172,9 @@ void gameLoop(char startingSide, board* mainBoard)
     bool currentBeenMoved = true;
     while (true)
     {
+        if (sideInCheck(mainBoard, side)) {
+            printf("king in check!\n");
+        }
         moveValid = false;
         //get input from user
         char* intitialPrompt = "Which move would you like to make? (Format: 1st coordinate [space] 2nd coordinate)\n\
@@ -177,7 +217,7 @@ void gameLoop(char startingSide, board* mainBoard)
         {
             for (int i = 0; i < mainBoard->boardMatrix[first->x][first->y]->movesLen; i++)
             {
-                printf("Move: %i X: %i Y: %i\n", i, movesList[i]->x, movesList[i]->y);
+                //printf("Move: %i X: %i Y: %i\n", i, movesList[i]->x, movesList[i]->y);
                 if (move->x == movesList[i]->x && move->y == movesList[i]->y)
                 {
                     printf("Move is in moves list for specified piece\n");
@@ -236,7 +276,7 @@ void gameLoop(char startingSide, board* mainBoard)
         //en passant
         //promotion
         //pawns (is first move for 2 space, has enemy diagonal for captures)
-        
+
         //see if check prevents move
         if (moveCausesCheck(first, second, mainBoard, side, mainBoard->boardMatrix[first->x][first->y]->hasBeenMoved))
         {

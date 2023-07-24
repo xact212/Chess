@@ -8,4 +8,5 @@ bool checkInputSyntax(char* inputStr);
 bool check(bool expression, char* successStr, char* failStr);
 bool moveCausesCheck(coordinate* first, coordinate* second, board* board, char currentSide, bool currentBeenMoved);
 void makeMove(coordinate* first, coordinate* second, board* board, bool currentBeenMoved);
+bool sideInCheck(board* board, char currentSide);
 #endif
