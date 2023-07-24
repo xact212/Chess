@@ -170,6 +170,8 @@ bool moveIsValid(coordinate* first, coordinate* second, coordinate* move, board*
     //check all special cases
     //different piece of same side is on destination square
     
+    if (second->x < 0 || second->x > 7 || second->y < 0 || second->y > 7) {return false;}
+
     if (board->boardMatrix[first->x][first->y]->side == board->boardMatrix[second->x][second->y]->side)
         return false;
     
@@ -337,12 +339,12 @@ void gameLoop(char startingSide, board* mainBoard)
             side = 'w';
 
         bool inMove = sideCanMove(mainBoard, side);
-        printBoard(mainBoard);
         bool inCheck = sideInCheck(mainBoard, side);
+        printBoard(mainBoard);
 
         if (!inMove && inCheck)
         {
-            printf("Side: %c is in checkmate!\n");
+            printf("Side: %c is in checkmate!\n", side);
             break;
         }
         else if (!inMove && !inCheck)

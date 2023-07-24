@@ -13,6 +13,11 @@ int main()
     buildPiece(mainBoard, 'p', 2, 7, 'b');
     buildPiece(mainBoard, 'k', 6, 6, 'w');
     buildPiece(mainBoard, 'r', 2, 2, 'b');
+    buildPiece(mainBoard, 'r', 6, 7, 'b');
+    buildPiece(mainBoard, 'r', 5, 7, 'b');
+    buildPiece(mainBoard, 'r', 4, 7, 'b');
+    buildPiece(mainBoard, 'r', 3, 7, 'b');
+    buildPiece(mainBoard, 'r', 1, 1, 'b');
     printBoard(mainBoard);
     gameLoop('w', mainBoard);
     freeBoard(mainBoard);
