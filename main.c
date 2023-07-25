@@ -7,22 +7,24 @@ int main()
 {
     board* mainBoard = buildBoard(8, 8); //creates board struct
     initBoardMatrix(mainBoard, 'n'); //sets each piece for initial configuration
-    buildPiece(mainBoard, 'p', 4, 4, 'w');
-    buildPiece(mainBoard, 'p', 4, 5, 'b');
-    buildPiece(mainBoard, 'p', 5, 5, 'b');
-    buildPiece(mainBoard, 'p', 2, 1, 'b');
-    buildPiece(mainBoard, 'k', 6, 6, 'w');
-    buildPiece(mainBoard, 'r', 2, 2, 'b');
-    buildPiece(mainBoard, 'r', 6, 7, 'b');
-    buildPiece(mainBoard, 'r', 5, 7, 'b');
-    buildPiece(mainBoard, 'r', 4, 7, 'b');
-    buildPiece(mainBoard, 'r', 3, 7, 'b');
-    buildPiece(mainBoard, 'r', 1, 1, 'b');
+    buildPiece(mainBoard, 'p', 0, 1, 'w');
+    buildPiece(mainBoard, 'p', 1, 1, 'w');
+    buildPiece(mainBoard, 'p', 2, 1, 'w');
+    buildPiece(mainBoard, 'p', 3, 1, 'w');
+    buildPiece(mainBoard, 'p', 4, 1, 'w');
+    buildPiece(mainBoard, 'p', 5, 1, 'w');
+    buildPiece(mainBoard, 'p', 6, 1, 'w');
+    buildPiece(mainBoard, 'p', 7, 1, 'w');
+    buildPiece(mainBoard, 'r', 0, 0, 'w');
+    buildPiece(mainBoard, 'B', 1, 0, 'w');
+    buildPiece(mainBoard, 'K', 2, 0, 'w');
+    buildPiece(mainBoard, 'q', 3, 0, 'w');
+    buildPiece(mainBoard, 'k', 4, 0, 'w');
+    buildPiece(mainBoard, 'K', 5, 0, 'w');
     buildPiece(mainBoard, 'B', 6, 0, 'w');
-    buildPiece(mainBoard, 'q', 0, 0, 'w');
-    buildPiece(mainBoard, 'K', 5, 2, 'b');
+    buildPiece(mainBoard, 'r', 7, 0, 'w');
     printBoard(mainBoard);
-    gameLoop('b', mainBoard);
+    gameLoop('w', mainBoard);
     freeBoard(mainBoard);
     return 0;
 }

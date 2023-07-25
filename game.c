@@ -331,6 +331,46 @@ bool sideInCheck(board* board, char side)  {
     return false;
 }
 
+bool canPerformCastle(coordinate* first, coordinate* second, coordinate* move, board* board)
+{
+    move->x = second->x - first->x;
+    move->y = second->y - first->y;
+    //must be the same side
+    bool sameSide = board->boardMatrix[first->x][first->y]->side == board->boardMatrix[second->x][second->y]->side;
+    //either origin needs to be rook and destination needs to be king
+    bool rookKing = board->boardMatrix[first->x][first->y]->display == 'r' && board->boardMatrix[second->x][second->y]->display == 'k';
+    //or origin needs to be king and destination needs to be rook
+    bool kingRook = board->boardMatrix[first->x][first->y]->display == 'k' && board->boardMatrix[second->x][second->y]->display == 'r';
+    bool areValidPieces = sameSide && (rookKing || kingRook);
+    //check path of rook in direction of king. if no collisions are detected, we can castle
+    bool noCollisions = pathCheckRook(first, second, move, board);
+    //neither can have castled before
+    bool anyBeenCastled = board->boardMatrix[first->x][first->y]->hasBeenMoved || board->boardMatrix[second->x][second->y]->hasBeenMoved;
+    if (noCollisions && areValidPieces && !anyBeenCastled)
+        return true;
+    return false;
+}
+
+void performCastle(coordinate* first, coordinate* second, board* board)
+{
+    char displayTemp = board->boardMatrix[second->x][second->y]->display;
+    char side = board->boardMatrix[second->x][second->y]->side;
+    if (displayTemp == 'r') //if rook make rook at destination and king at origin
+    {
+        buildPiece(board, 'k', second->x, second->y, side);
+        board->boardMatrix[second->x][second->y]->hasBeenMoved = true;
+        buildPiece(board, 'r', first->x, first->y, side);
+        board->boardMatrix[first->x][first->y]->hasBeenMoved = true;
+    }
+    else if (displayTemp == 'k')
+    {
+        buildPiece(board, 'r', second->x, second->y, side);
+        board->boardMatrix[second->x][second->y]->hasBeenMoved = true;
+        buildPiece(board, 'k', first->x, first->y, side);
+        board->boardMatrix[first->x][first->y]->hasBeenMoved = true;
+    }
+}
+
 bool moveIsValid(coordinate* first, coordinate* second, coordinate* move, board* board, char side, bool keepMove) 
 {
     bool moveValid = false;
@@ -545,7 +585,6 @@ void gameLoop(char startingSide, board* mainBoard)
     coordinate* move = buildCoordinate(0, 0);
     while (true)
     {
-        bool moveValid = false;
         //get input from user
         char* intitialPrompt = "What would you like to do?\n1. Move\n2. View piece info\n3. Quit\n";
         printf("%s", intitialPrompt);
@@ -561,10 +600,15 @@ void gameLoop(char startingSide, board* mainBoard)
         first->y = atoi(&input[3]) - 1;
         second->x = atoi(&input[7]) - 1; //reassign coordinates
         second->y = atoi(&input[9]) - 1;
+        bool canCastle = canPerformCastle(first, second, move, mainBoard);
+        bool moveValid = moveIsValid(first, second, move, mainBoard, side, true);
         //we need to subtract one becasue we start counting at zero, but a human will start counting at one
-        if (!moveIsValid(first, second, move, mainBoard, side, true))
+        if (!moveValid && !canCastle)
             continue;
-
+        else if (canCastle)
+            performCastle(first, second, mainBoard);
+        //not included in moveIsValid because we can't castle to get out of check
+        
         //change side
         if (side == 'w')
             side = 'b';
