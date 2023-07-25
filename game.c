@@ -50,7 +50,6 @@ bool checkInputSyntax(char* input)
 bool tracePath(coordinate* first, coordinate* second, coordinate* move, board* board, char straightOrDiagonal, char direction)
 {
     coordinate* currSpace = buildCoordinate(first->x, first->y);
-    printf("straight/diagonal?: %c direction?: %c\n", straightOrDiagonal, direction);
     //s == straight, d == diagonal
     if (straightOrDiagonal == 's') //check for movement in straight lines
     {
@@ -60,40 +59,38 @@ bool tracePath(coordinate* first, coordinate* second, coordinate* move, board* b
             {
                 while (currSpace->y < second->y) //assume already checked for being out of bounds of board
                 { //if current square not open space path is invalid
-                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
                     currSpace->y++;
+                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
                 }
                 free(currSpace);
                 return true; 
             }
             case 'r' : //right
             {
-                currSpace->x++; //prevents checking own square
-                while(currSpace->x < move->x) 
+                while(currSpace->x < second->x) 
                 {
-                    printf("currx: %i\n", currSpace->x);
-                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
                     currSpace->x++;
+                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
                 }
                 free(currSpace);
                 return true;
             }
             case 'd' : //down
             {
-                while(currSpace->y > move->y) 
+                while(currSpace->y > second->y) 
                 {
-                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
                     currSpace->y--;
+                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
                 }
                 free(currSpace);
                 return true;
             }   
             case 'l' : //left
             {
-                while(currSpace->x > move->x) 
+                while(currSpace->x > second->x) 
                 {
-                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
                     currSpace->x--;
+                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
                 }
                 free(currSpace);
                 return true;
@@ -103,8 +100,8 @@ bool tracePath(coordinate* first, coordinate* second, coordinate* move, board* b
                 puts("No direction specified, checking up");  
                 while (currSpace->y < second->y) 
                 { 
-                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
                     currSpace->y++;
+                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
                 }
                 free(currSpace);
                 return true; 
@@ -120,19 +117,19 @@ bool tracePath(coordinate* first, coordinate* second, coordinate* move, board* b
             {
                 while (currSpace->x < second->x && currSpace->y < second->y)
                 {
-                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
                     currSpace->x++;
                     currSpace->y++;
+                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
                     free(currSpace);
                 }
             }
-            case 'w' : //up right
+            case 'w' : //down right
             {
                 while (currSpace->x < second->x && currSpace->y > second->y)
                 {
-                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
                     currSpace->x++;
                     currSpace->y--;
+                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
                     free(currSpace);
                 }
             }
@@ -140,9 +137,9 @@ bool tracePath(coordinate* first, coordinate* second, coordinate* move, board* b
             {
                 while (currSpace->x > second->x && currSpace->y > second->y)
                 {
-                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
                     currSpace->x--;
                     currSpace->y--;
+                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
                     free(currSpace);
                 }
             }
@@ -150,9 +147,9 @@ bool tracePath(coordinate* first, coordinate* second, coordinate* move, board* b
             {
                 while (currSpace->x > second->x && currSpace->y < second->y)
                 {
-                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
                     currSpace->x--;
                     currSpace->y++;
+                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
                     free(currSpace);
                 }
             }
@@ -333,8 +330,8 @@ bool moveIsValid(coordinate* first, coordinate* second, coordinate* move, board*
     //different piece of same side is on destination square
     
     if (second->x < 0 || second->x > 7 || second->y < 0 || second->y > 7) {return false;}
-    if (!pathIsValid(first, second, move, board)) {return false;}
     if (board->boardMatrix[first->x][first->y]->side == board->boardMatrix[second->x][second->y]->side) {return false;}
+    if (!pathIsValid(first, second, move, board)) {return false;}
     
     //castling
     //pawn move 2 vs 1
@@ -374,11 +371,19 @@ bool sideCanMove(board* board, char side)
                     move->x = second->x - first->x;
                     move->y = second->y - second->y;  
                     if (moveIsValid(first, second, move, board, side, false)) //if there is at least one move that is valid return true
+                    {
+                        free(first);
+                        free(second);
+                        free(move);
                         return true;
+                    }
                 }
             }
         }
     }
+    free(first);
+    free(second);
+    free(move);
     return false; //if not return false
 }
 
