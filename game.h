@@ -4,7 +4,7 @@
 #include <stdbool.h>
 
 void gameLoop(char startingSide, board* mainBoard);
-bool checkInputSyntax(char* inputStr);
+bool checkInputSyntax(char* inputStr, bool firstOnly);
 bool check(bool expression, char* successStr, char* failStr);
 bool moveCausesCheck(coordinate* first, coordinate* second, board* board, char currentSide, bool currentBeenMoved, bool keepMove);
 void makeMove(coordinate* first, coordinate* second, board* board, bool currentBeenMoved);

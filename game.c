@@ -23,7 +23,7 @@ bool check(bool expression, char* successStr, char* failStr)
     }  
 }
 
-bool checkInputSyntax(char* input)
+bool checkInputSyntax(char* input, bool firstOnly)
 {
     //expecting coordinates to be from 1-8 rather than 0-7. this helps us because
     //atoi returns 0 if input is not integer
@@ -34,11 +34,16 @@ bool checkInputSyntax(char* input)
     (atoi(&input[3]) > 0 && atoi(&input[3]) < 9) && input[4] == ')');
     inputValid = check(firstCoordinateCondition, "first coordinate good", "first coordinate bad, please re-enter move");
     if (!inputValid) {return false;}
+    if (firstOnly) {return true;}
 
-    //second coordinate syntax evalutaion, expecting: _(x2,y2)
-    bool secondCoordinateCondition = (input[5] == '_' && input[6] == '(' && (atoi(&input[7]) > 0 && atoi(&input[7]) < 9)  && input[8] == ',' && 
-    (atoi(&input[9]) > 0 && atoi(&input[9]) < 9) && input[10] == ')');
-    return check(secondCoordinateCondition, "second coordinate good", "second coordinate bad, please re-enter move");
+    if (!firstOnly)
+    {
+        //second coordinate syntax evalutaion, expecting: _(x2,y2)
+        bool secondCoordinateCondition = (input[5] == '_' && input[6] == '(' && (atoi(&input[7]) > 0 && atoi(&input[7]) < 9)  && input[8] == ',' && 
+        (atoi(&input[9]) > 0 && atoi(&input[9]) < 9) && input[10] == ')');
+        return check(secondCoordinateCondition, "second coordinate good", "second coordinate bad, please re-enter move");
+    }
+    
 }
 
 //conditionally loop through all squares in current direction and return false if a space is not an
@@ -313,9 +318,9 @@ bool sideInCheck(board* board, char side)  {
                     //see if each move puts your current king in check
                     bool isKing = board->boardMatrix[second->x][second->y]->display == 'k';
                     bool isCurrSide = board->boardMatrix[second->x][second->y]->side == side;
-                    bool kingInCheck = isKing && isCurrSide;
+                    bool kingInCheck = isKing && isCurrSide && pathIsValid(first, second, board->boardMatrix[i][j]->moves[move], board);
                     if (kingInCheck) {
-                        printf("Side :%c is in check\n", side);
+                        //printf("Side :%c is in check\n", side);
                         free(first);
                         free(second);
                         return true;
@@ -325,7 +330,7 @@ bool sideInCheck(board* board, char side)  {
         }
     }
     //if none of them do, we are not in check
-    printf("Side :%c is not in check\n", side);
+    //printf("Side :%c is not in check\n", side);
     free(first);
     free(second);
     return false;
@@ -541,9 +546,24 @@ bool moveCausesCheck(coordinate* first, coordinate* second, board* board, char c
                 {
                     currMoveX = i + captureList[move]->x; //set hypothetical move relative to current piece position
                     currMoveY = j + captureList[move]->y;
+                    coordinate* first = buildCoordinate(i, j);
+                    coordinate* second = buildCoordinate(currMoveX, currMoveY);
                     //if current side's king is in check now, we need to undo the move and return true
                     //printf("Move: %i X: %i Y: %i\n", move, captureList[move]->x, captureList[move]->y);
-                    if (currMoveX < 0 || currMoveX > 7 || currMoveY < 0 || currMoveY > 7) {continue;} //if move is out of range of board go to next loop iteration
+                    if (currMoveX < 0 || currMoveX > 7 || currMoveY < 0 || currMoveY > 7) 
+                    {
+                        free(first);
+                        free(second);
+                        continue;
+                    } //if move is out of range of board go to next loop iteration
+                    if (!pathIsValid(first, second, captureList[move], board)) 
+                    {
+                        free(first);
+                        free(second);
+                        continue;
+                    }
+                    free(first);
+                    free(second);
                     if (board->boardMatrix[currMoveX][currMoveY]->display == 'k' && board->boardMatrix[currMoveX][currMoveY]->side == currentSide) 
                     {
                         makeMove(second, first, board, currentBeenMoved); //move whatever is at destination square back
@@ -574,38 +594,130 @@ bool moveCausesCheck(coordinate* first, coordinate* second, board* board, char c
     return false; //if we get to the end without problem we can safely return false
 }
 
+void movePrompt(char *input, int inputLen)
+{
+    char moveInput[inputLen];
+    for (int i = 0 ; i < inputLen; i++) {moveInput[i] = input[i];}
+    bool inputValid = false;
+    while(!inputValid) 
+    {
+        puts("Which square would you like to be your origin? Which would you liek to be the destination?");
+        puts("(syntax): (x1,y1)_(x2,y2)");
+        scanf("%s", &moveInput);
+        if (!checkInputSyntax(moveInput, false))
+        {
+            puts("invalid coordinate pair");
+            continue;
+        }
+        for (int i = 0 ; i < inputLen; i++) {input[i] = moveInput[i];}
+        return;
+    }
+}
+
+void printPieceInfo(coordinate* location, board* board)
+{
+    char *displayName;
+    switch(board->boardMatrix[location->x][location->y]->display)
+    {
+        case 'p' :
+            displayName = "pawn";
+            break;
+        case 'r' :
+            displayName = "rook";
+            break;
+        case 'k' :
+            displayName = "king";
+            break;
+        case 'K' :
+            displayName = "knight";
+            break;
+        case 'B' :
+            displayName = "bishop";
+            break;
+        case 'q' :
+            displayName = "queen";
+            break;
+        case 'X' : 
+            displayName = "open space";
+            break;
+        default :
+            displayName = "unkown";
+            break;
+    }
+    printf("Name: %s\n", displayName);
+    printf("Has %i moves\n", board->boardMatrix[location->x][location->y]->movesLen);
+    printf("Is on side %c\n", board->boardMatrix[location->x][location->y]->side);
+}
+
+void viewPrompt(char *input, int inputLen, coordinate* location, board* board)
+{
+    char viewInput[inputLen];
+    for (int i = 0 ; i < inputLen; i++) {viewInput[i] = input[i];}
+    bool inputValid = false;
+    while(!inputValid) 
+    {
+        puts("Which square would you like to view the info of?");
+        puts("(syntax): (x1,y1)");
+        scanf("%s", &viewInput);
+        if (!checkInputSyntax(viewInput, true))
+        {
+            puts("invalid coordinate");
+            continue;
+        }
+        location->x = atoi(&viewInput[1]) - 1; //reassign coordinates 
+        location->y = atoi(&viewInput[3]) - 1;
+        printPieceInfo(location, board);
+        return;
+    }
+}
+
 
 void gameLoop(char startingSide, board* mainBoard)
 {
     char side = startingSide; //setup starting conditions
     char* currentPiece = "pawn";
-    char input[1024] = "0000000000"; //reason for large number is to prevent buffer overflow
+    int inputLen = 1024;
+    char input[inputLen]; //reason for large number is to prevent buffer overflow
+    for (int i = 0 ; i < inputLen; i++) {input[i] = '0';}
     coordinate* first = buildCoordinate(0, 0);
     coordinate* second = buildCoordinate(0, 0);
     coordinate* move = buildCoordinate(0, 0);
     while (true)
     {
         //get input from user
-        char* intitialPrompt = "What would you like to do?\n1. Move\n2. View piece info\n3. Quit\n";
+        char* intitialPrompt = "What would you like to do?\n1. Move\n2. View piece info (type view)\n3. Quit\n";
         printf("%s", intitialPrompt);
         scanf("%s", &input);
 
-        if (input[0] == 'q' || input == "quit") { //allow user to quit by exiting main loop
-            break;
+        if (input[0] == 'm' || input == "move" || input == "Move" || input[0] == '1')
+        {
+            movePrompt(input, inputLen);
         }
-         
-        if (!checkInputSyntax(input))
+
+        else if (input[0] == 'v' || input == "view" || input == "View" || input[0] == '2')
+        {
+            viewPrompt(input, inputLen, first, mainBoard);
             continue;
-        first->x = atoi(&input[1]) - 1; //reassign coordinat`es 
+        }
+
+        //allow user to quit by exiting main loop
+        else if (input[0] == 'q' || input == "quit" || input == "Quit" || input[0] == '3') 
+            break;
+
+        else 
+            continue;
+
+        first->x = atoi(&input[1]) - 1; //reassign coordinates 
         first->y = atoi(&input[3]) - 1;
         second->x = atoi(&input[7]) - 1; //reassign coordinates
         second->y = atoi(&input[9]) - 1;
+
         bool canCastle = canPerformCastle(first, second, move, mainBoard);
         bool moveValid = moveIsValid(first, second, move, mainBoard, side, true);
         //we need to subtract one becasue we start counting at zero, but a human will start counting at one
-        if (!moveValid && !canCastle)
+        if (!moveValid)
             continue;
-        else if (canCastle)
+        if (canCastle)
             performCastle(first, second, mainBoard);
         //not included in moveIsValid because we can't castle to get out of check
         

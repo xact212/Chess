@@ -5,6 +5,7 @@ bishop* buildBishop(char side) {
     bishop* myBishop = malloc(sizeof(bishop) * 2);
     myBishop->display = 'B';
     myBishop->side = side;
+    myBishop->hasBeenMoved = false;
     myBishop->movesLen = 28; //7 squares in one direction max * 4 directions = 28 moves
     coordinate** moves = malloc(myBishop->movesLen * sizeof(coordinate*));
     for (int i = 0; i < 7; i++) { //up left
