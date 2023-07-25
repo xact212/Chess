@@ -16,12 +16,12 @@ int main()
     buildPiece(mainBoard, 'p', 6, 1, 'w');
     buildPiece(mainBoard, 'p', 7, 1, 'w');
     buildPiece(mainBoard, 'r', 0, 0, 'w');
-    buildPiece(mainBoard, 'B', 1, 0, 'w');
-    buildPiece(mainBoard, 'K', 2, 0, 'w');
+    buildPiece(mainBoard, 'K', 1, 0, 'w');
+    buildPiece(mainBoard, 'B', 2, 0, 'w');
     buildPiece(mainBoard, 'q', 3, 0, 'w');
     buildPiece(mainBoard, 'k', 4, 0, 'w');
-    buildPiece(mainBoard, 'K', 5, 0, 'w');
-    buildPiece(mainBoard, 'B', 6, 0, 'w');
+    buildPiece(mainBoard, 'B', 5, 0, 'w');
+    buildPiece(mainBoard, 'K', 6, 0, 'w');
     buildPiece(mainBoard, 'r', 7, 0, 'w');
 
     buildPiece(mainBoard, 'p', 0, 6, 'b'); //black
@@ -33,12 +33,12 @@ int main()
     buildPiece(mainBoard, 'p', 6, 6, 'b');
     buildPiece(mainBoard, 'p', 7, 6, 'b');
     buildPiece(mainBoard, 'r', 0, 7, 'b');
-    buildPiece(mainBoard, 'B', 1, 7, 'b');
-    buildPiece(mainBoard, 'K', 2, 7, 'b');
+    buildPiece(mainBoard, 'K', 1, 7, 'b');
+    buildPiece(mainBoard, 'B', 2, 7, 'b');
     buildPiece(mainBoard, 'k', 3, 7, 'b');
     buildPiece(mainBoard, 'q', 4, 7, 'b');
-    buildPiece(mainBoard, 'K', 5, 7, 'b');
-    buildPiece(mainBoard, 'B', 6, 7, 'b');
+    buildPiece(mainBoard, 'B', 5, 7, 'b');
+    buildPiece(mainBoard, 'K', 6, 7, 'b');
     buildPiece(mainBoard, 'r', 7, 7, 'b');
 
     printBoard(mainBoard);
