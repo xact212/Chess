@@ -33,3 +33,23 @@ bishop* buildBishop(char side) {
     myBishop->moves = moves;
     return myBishop;
 }
+
+/*
+
+ 7              14
+  6            13
+   5          12
+    4        11
+     3      10
+      2    9
+       1  8 
+         b
+      22  15
+     23     16
+    24       17
+   25         18 
+  26           19
+ 27             20
+28                21
+
+*/

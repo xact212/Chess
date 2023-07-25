@@ -30,3 +30,23 @@ rook* buildRook(char side) {
     myRook->moves = moves;
     return myRook;
 }
+
+/*
+              14
+              13
+              12
+              11
+              10
+              9
+              8
+7 6 5 4 3 2 1 r 15 16 17 18 19 20 21      
+              22
+              23
+              24
+              25
+              26
+              27
+              28
+
+
+*/

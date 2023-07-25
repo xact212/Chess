@@ -2,6 +2,7 @@
 #define PAWN_H
 #include "coordinate.h"
 #include "game.h"
+#include "board.h"
 #include <stdbool.h>
 
 typedef struct pawn{
@@ -13,5 +14,7 @@ typedef struct pawn{
 }pawn;
 
 pawn* buildPawn(char side);
+void promotePawn(coordinate* currentPos, board* board);
+bool checkPawn(coordinate* first, coordinate* second, coordinate* move, board* board);
 
 #endif

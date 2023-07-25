@@ -212,7 +212,6 @@ bool tracePath(coordinate* first, coordinate* second, coordinate* move, board* b
 
 bool pathCheckBishop(coordinate* first, coordinate* second, coordinate* move, board* board)
 {
-    printf("trying to move bishop x: %i y: %i\n", move->x, move->y);
     if (move->x < 0 && move->y > 0) //moving up left
     {
         return tracePath(first, second, move, board, 'd', 'q');
@@ -234,7 +233,6 @@ bool pathCheckBishop(coordinate* first, coordinate* second, coordinate* move, bo
 
 bool pathCheckRook(coordinate* first, coordinate* second, coordinate* move, board* board)
 {
-    printf("trying to move rook x: %i y: %i\n", move->x, move->y);
     if (move->x == 0 && move->y > 0) //moving up
     {
         return tracePath(first, second, move, board, 's', 'u');
@@ -264,7 +262,7 @@ bool pathIsValid(coordinate* first, coordinate* second, coordinate* move, board*
         {
             if (!pathCheckRook(first, second, move, board))
             {
-                puts("Trying to move rook through other piece!");
+                //puts("Trying to move rook through other piece!");
                 return false;
             }
             return true;
@@ -273,14 +271,14 @@ bool pathIsValid(coordinate* first, coordinate* second, coordinate* move, board*
         case 'b' :
             if (!pathCheckBishop(first, second, move, board))
             {
-                puts("Trying to move bishop through other piece!");
+                //puts("Trying to move bishop through other piece!");
                 return false;
             }
             return true;
         case 'q' : //a queen is really just a combination of a rook and a bishop, so refactoring into different function is uneccesary
             if (!pathCheckRook(first, second, move, board) || !pathCheckBishop(first, second, move, board))
             {
-                puts("Trying to move queen through other piece!");
+                //puts("Trying to move queen through other piece!");
                 return false;
             }
             return true;
@@ -295,32 +293,6 @@ void makeMove(coordinate* first, coordinate* second, board* board, bool currentB
     board->boardMatrix[second->x][second->y]->hasBeenMoved = currentBeenMoved; //for pawn to check if has moved twice
     buildPiece(board, 'X', first->x, first->y, 'n');
     //printBoard(board);
-}
-
-bool checkPawn(coordinate* first, coordinate* second, coordinate* move, board* board) 
-{
-    if ((board->boardMatrix[first->x][first->y]->hasBeenMoved && (move->y == 2 || move->y == -2))) //if has been moved and is trying to move 2 spaces
-    {
-        return false;
-    }
-    else
-    {
-        board->boardMatrix[first->x][first->y]->hasBeenMoved = true; //if hasn't made move before, set it so the pawn cant make it again
-    }    
-    //capturing
-    //code to move a piece should also work for captures, unless piece is a pawn or king
-    //if piece we are moving into is not an open space, and we are using our non capture moves, move is invalid
-    if (move->x == 0 && board->boardMatrix[second->x][second->y]->side != 'n')
-    {
-            printf("Trying to capture with non-capture move\n");
-            return false;
-    }
-    if ((move->x == 1 || move->x == -1) && board->boardMatrix[second->x][second->y]->moves[0] == NULL)
-    {
-        printf("Trying to capture open space\n");
-        return false;
-    }
-    return true;
 }
 
 bool sideInCheck(board* board, char side)  {
@@ -364,11 +336,11 @@ bool moveIsValid(coordinate* first, coordinate* second, coordinate* move, board*
     bool moveValid = false;
     bool currentBeenMoved = true;
     //check if piece is on current side
-    printf("Side: %c\n", side);
-    printf("Piece side: %c\n", board->boardMatrix[first->x][first->y]->side);
+    //printf("Side: %c\n", side);
+    //printf("Piece side: %c\n", board->boardMatrix[first->x][first->y]->side);
     if (side != board->boardMatrix[first->x][first->y]->side) //if white, make sure you are not trying to control black piece
     {
-        printf("Trying to move piece of opposite side\n");
+        //printf("Trying to move piece of opposite side\n");
         return false;
     }
 
@@ -387,14 +359,14 @@ bool moveIsValid(coordinate* first, coordinate* second, coordinate* move, board*
     move->x = second->x - first->x;
     move->y = second->y - first->y;
     
-    if(check(movesList[0] != NULL, "", "Trying to move open space"))
+    if(movesList[0] != NULL)
     {
         for (int i = 0; i < board->boardMatrix[first->x][first->y]->movesLen; i++)
         {
             //printf("Move: %i X: %i Y: %i\n", i, movesList[i]->x, movesList[i]->y);
             if (move->x == movesList[i]->x && move->y == movesList[i]->y)
             {
-                printf("Move is in moves list for specified piece\n");
+                //printf("Move is in moves list for specified piece\n");
                 moveValid = true;
                 break;
             }
@@ -402,7 +374,7 @@ bool moveIsValid(coordinate* first, coordinate* second, coordinate* move, board*
     }
     if (moveValid == false)
     {
-        printf("Move not in moves list\n");
+        //printf("Move not in moves list\n");
         return false;
     }
     //printf("Move valid: %i\n", moveValid);  
@@ -523,14 +495,14 @@ bool moveCausesCheck(coordinate* first, coordinate* second, board* board, char c
                         captureList[move]->y = board->boardMatrix[i][j]->moves[move]->y;
                     }
                 }
-                printf("i: %i j: %i\n", i, j);
+                //printf("i: %i j: %i\n", i, j);
                 //loop through capture list and check if it has a move that could capture your king
                 for (int move = 0; move < board->boardMatrix[i][j]->movesLen; move++)
                 {
                     currMoveX = i + captureList[move]->x; //set hypothetical move relative to current piece position
                     currMoveY = j + captureList[move]->y;
                     //if current side's king is in check now, we need to undo the move and return true
-                    printf("Move: %i X: %i Y: %i\n", move, captureList[move]->x, captureList[move]->y);
+                    //printf("Move: %i X: %i Y: %i\n", move, captureList[move]->x, captureList[move]->y);
                     if (currMoveX < 0 || currMoveX > 7 || currMoveY < 0 || currMoveY > 7) {continue;} //if move is out of range of board go to next loop iteration
                     if (board->boardMatrix[currMoveX][currMoveY]->display == 'k' && board->boardMatrix[currMoveX][currMoveY]->side == currentSide) 
                     {
@@ -538,7 +510,7 @@ bool moveCausesCheck(coordinate* first, coordinate* second, board* board, char c
                         buildPiece(board, secondDisplay, second->x, second->y, secondSide); //make copy of what used to be at second at second square again
                         board->boardMatrix[second->x][second->y]->hasBeenMoved = secondhasBeenMoved;
                         for (int space = 0; space < captureListLen; space++){free(captureList[space]);}
-                        printf("Move puts king in check\n");
+                        //printf("Move puts king in check\n");
                         return true;
                     }
                 }
@@ -547,12 +519,17 @@ bool moveCausesCheck(coordinate* first, coordinate* second, board* board, char c
         }
     }
     for (int space = 0; space < captureListLen; space++){free(captureList[space]);}
-    printf("Move does not put king in check\n");
-    printf("Keeping move? %i\n", keepMove);
+    //printf("Move does not put king in check\n");
+    //printf("Keeping move? %i\n", keepMove);
     if (!keepMove) 
     {
         makeMove(second, first, board, currentBeenMoved); //move whatever is at destination square back
         buildPiece(board, secondDisplay, second->x, second->y, secondSide); //make copy of what used to be at second at second square again
+    }
+    else 
+    {
+        if (board->boardMatrix[second->x][second->y]->display == 'p')
+            promotePawn(second, board);
     }
     return false; //if we get to the end without problem we can safely return false
 }
