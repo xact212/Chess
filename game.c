@@ -57,40 +57,60 @@ bool tracePath(coordinate* first, coordinate* second, coordinate* move, board* b
         {
             case 'u' : //up
             {
+                currSpace->y++;
                 while (currSpace->y < second->y) //assume already checked for being out of bounds of board
                 { //if current square not open space path is invalid
+                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') 
+                    {
+                        free(currSpace);
+                        return false;
+                    }
                     currSpace->y++;
-                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
                 }
                 free(currSpace);
                 return true; 
             }
             case 'r' : //right
             {
+                currSpace->x++;
                 while(currSpace->x < second->x) 
                 {
+                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') 
+                    {
+                        free(currSpace);
+                        return false;
+                    }
                     currSpace->x++;
-                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
                 }
                 free(currSpace);
                 return true;
             }
             case 'd' : //down
             {
+                currSpace->y--;
                 while(currSpace->y > second->y) 
                 {
+                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') 
+                    {
+                        free(currSpace);
+                        return false;
+                    }
                     currSpace->y--;
-                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
                 }
                 free(currSpace);
                 return true;
             }   
             case 'l' : //left
             {
+                currSpace->x--;
                 while(currSpace->x > second->x) 
                 {
+                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') 
+                    {
+                        free(currSpace);
+                        return false;
+                    }
                     currSpace->x--;
-                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
                 }
                 free(currSpace);
                 return true;
@@ -101,7 +121,11 @@ bool tracePath(coordinate* first, coordinate* second, coordinate* move, board* b
                 while (currSpace->y < second->y) 
                 { 
                     currSpace->y++;
-                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
+                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') 
+                    {
+                        free(currSpace);
+                        return false;
+                    }
                 }
                 free(currSpace);
                 return true; 
@@ -115,47 +139,97 @@ bool tracePath(coordinate* first, coordinate* second, coordinate* move, board* b
         {
             case 'q' : //up right
             {
+                currSpace->x++;
+                currSpace->y++;
                 while (currSpace->x < second->x && currSpace->y < second->y)
                 {
+                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') 
+                    {
+                        free(currSpace);
+                        return false;
+                    }
                     currSpace->x++;
                     currSpace->y++;
-                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
-                    free(currSpace);
                 }
+                free(currSpace);
+                return true; 
             }
             case 'w' : //down right
             {
+                currSpace->x++;
+                currSpace->y--;
                 while (currSpace->x < second->x && currSpace->y > second->y)
                 {
+                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') 
+                    {
+                        free(currSpace);
+                        return false;
+                    }
                     currSpace->x++;
                     currSpace->y--;
-                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
-                    free(currSpace);
                 }
+                free(currSpace);
+                return true; 
             }
             case 'a' : //down left
             {
+                currSpace->x--;
+                    currSpace->y--;
                 while (currSpace->x > second->x && currSpace->y > second->y)
                 {
+                    
+                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') 
+                    {
+                        free(currSpace);
+                        return false;
+                    }
                     currSpace->x--;
                     currSpace->y--;
-                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
-                    free(currSpace);
                 }
+                free(currSpace);
+                return true; 
             }
             case 's' : //up left
             {
+                currSpace->x--;
+                currSpace->y++;
                 while (currSpace->x > second->x && currSpace->y < second->y)
                 {
+                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') 
+                    {
+                        free(currSpace);
+                        return false;
+                    }
                     currSpace->x--;
                     currSpace->y++;
-                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
-                    free(currSpace);
                 }
+                free(currSpace);
+                return true; 
             }
         }
     }
     return true;
+}
+
+bool pathCheckBishop(coordinate* first, coordinate* second, coordinate* move, board* board)
+{
+    printf("trying to move bishop x: %i y: %i\n", move->x, move->y);
+    if (move->x < 0 && move->y > 0) //moving up left
+    {
+        return tracePath(first, second, move, board, 'd', 'q');
+    }
+    else if (move->x > 0 && move->y > 0) //moving up right
+    {
+        return tracePath(first, second, move, board, 'd', 'w');
+    }
+    else if (move->x > 0 && move->y < 0) //moving down right
+    {
+        return tracePath(first, second, move, board, 'd', 's');
+    }
+    else if (move->x < 0 && move->y < 0) //moving down left
+    {
+        return tracePath(first, second, move, board, 'd', 'a');
+    }
 }
 
 bool pathCheckRook(coordinate* first, coordinate* second, coordinate* move, board* board)

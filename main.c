@@ -18,6 +18,7 @@ int main()
     buildPiece(mainBoard, 'r', 4, 7, 'b');
     buildPiece(mainBoard, 'r', 3, 7, 'b');
     buildPiece(mainBoard, 'r', 1, 1, 'b');
+    buildPiece(mainBoard, 'B', 6, 0, 'w');
     printBoard(mainBoard);
     gameLoop('b', mainBoard);
     freeBoard(mainBoard);

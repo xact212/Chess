@@ -3,6 +3,7 @@
 #include "pawn.h"
 #include "king.h"
 #include "rook.h"
+#include "bishop.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -90,8 +91,11 @@ void buildPiece(board* board, char piece, int x, int y, char side) //allows each
         case 'r' :
             board->boardMatrix[x][y] = buildRook(side);
             break;
+        case 'B' :
+            board->boardMatrix[x][y] = buildBishop(side);
+            break;
         default: 
-            printf("No piece specified, creating open space");
+            puts("No piece specified, creating open space");
             board->boardMatrix[x][y] = buildOpenSpace(side);
     }
 }

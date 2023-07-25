@@ -1,5 +1,6 @@
 #include "rook.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 rook* buildRook(char side) {
     rook* myRook = malloc(sizeof(rook) * 2);
