@@ -5,6 +5,7 @@
 #include "rook.h"
 #include "bishop.h"
 #include "queen.h"
+#include "knight.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -98,6 +99,9 @@ void buildPiece(board* board, char piece, int x, int y, char side) //allows each
         case 'q' :
             board->boardMatrix[x][y] = buildQueen(side);
             break;
+        case 'K' :
+            board->boardMatrix[x][y] = buildKnight(side);
+            break; 
         default: 
             puts("No piece specified, creating open space");
             board->boardMatrix[x][y] = buildOpenSpace(side);

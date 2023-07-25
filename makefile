@@ -1,8 +1,8 @@
 cc=gcc -std=c99 -g
 exe=chess
 
-$(exe) : queen.o bishop.o rook.o king.o pawn.o board.o openSpace.o game.o coordinate.o main.c 
-	$(cc) queen.o bishop.o rook.o king.o pawn.o board.o openSpace.o game.o coordinate.o main.c -o $(exe)
+$(exe) : knight.o queen.o bishop.o rook.o king.o pawn.o board.o openSpace.o game.o coordinate.o main.c 
+	$(cc) knight.o queen.o bishop.o rook.o king.o pawn.o board.o openSpace.o game.o coordinate.o main.c -o $(exe)
 
 coordinate.o : coordinate.c coordinate.h
 	$(cc) coordinate.c -c
@@ -21,6 +21,9 @@ bishop.o : bishop.c bishop.h
 
 queen.o : queen.c queen.h
 	$(cc) queen.c -c
+
+knight.o : knight.c knight.h
+	$(cc) knight.c -c
 
 board.o : board.c board.h openSpace.h
 	$(cc) board.c -c

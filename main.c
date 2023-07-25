@@ -20,6 +20,7 @@ int main()
     buildPiece(mainBoard, 'r', 1, 1, 'b');
     buildPiece(mainBoard, 'B', 6, 0, 'w');
     buildPiece(mainBoard, 'q', 0, 0, 'w');
+    buildPiece(mainBoard, 'K', 5, 2, 'b');
     printBoard(mainBoard);
     gameLoop('b', mainBoard);
     freeBoard(mainBoard);
