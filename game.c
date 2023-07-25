@@ -42,6 +42,168 @@ bool checkInputSyntax(char* input)
     return inputValid;
 }
 
+//conditionally loop through all squares in current direction and return false if a space is not an
+//open space
+// q u w
+// l   r
+// a d s
+bool tracePath(coordinate* first, coordinate* second, coordinate* move, board* board, char straightOrDiagonal, char direction)
+{
+    coordinate* currSpace = buildCoordinate(first->x, first->y);
+    printf("straight/diagonal?: %c direction?: %c\n", straightOrDiagonal, direction);
+    //s == straight, d == diagonal
+    if (straightOrDiagonal == 's') //check for movement in straight lines
+    {
+        switch (direction)
+        {
+            case 'u' : //up
+            {
+                while (currSpace->y < second->y) //assume already checked for being out of bounds of board
+                { //if current square not open space path is invalid
+                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
+                    currSpace->y++;
+                }
+                free(currSpace);
+                return true; 
+            }
+            case 'r' : //right
+            {
+                currSpace->x++; //prevents checking own square
+                while(currSpace->x < move->x) 
+                {
+                    printf("currx: %i\n", currSpace->x);
+                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
+                    currSpace->x++;
+                }
+                free(currSpace);
+                return true;
+            }
+            case 'd' : //down
+            {
+                while(currSpace->y > move->y) 
+                {
+                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
+                    currSpace->y--;
+                }
+                free(currSpace);
+                return true;
+            }   
+            case 'l' : //left
+            {
+                while(currSpace->x > move->x) 
+                {
+                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
+                    currSpace->x--;
+                }
+                free(currSpace);
+                return true;
+            }
+            default :
+            {
+                puts("No direction specified, checking up");  
+                while (currSpace->y < second->y) 
+                { 
+                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
+                    currSpace->y++;
+                }
+                free(currSpace);
+                return true; 
+            }
+                
+        }
+    }
+    else if (straightOrDiagonal == 'd') //checks for movement in diagonal lines
+    {
+        switch (direction)
+        {
+            case 'q' : //up right
+            {
+                while (currSpace->x < second->x && currSpace->y < second->y)
+                {
+                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
+                    currSpace->x++;
+                    currSpace->y++;
+                    free(currSpace);
+                }
+            }
+            case 'w' : //up right
+            {
+                while (currSpace->x < second->x && currSpace->y > second->y)
+                {
+                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
+                    currSpace->x++;
+                    currSpace->y--;
+                    free(currSpace);
+                }
+            }
+            case 'a' : //down left
+            {
+                while (currSpace->x > second->x && currSpace->y > second->y)
+                {
+                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
+                    currSpace->x--;
+                    currSpace->y--;
+                    free(currSpace);
+                }
+            }
+            case 's' : //up left
+            {
+                while (currSpace->x > second->x && currSpace->y < second->y)
+                {
+                    if (board->boardMatrix[currSpace->x][currSpace->y]->display != 'X') {return false;}
+                    currSpace->x--;
+                    currSpace->y++;
+                    free(currSpace);
+                }
+            }
+        }
+    }
+    return true;
+}
+
+bool pathCheckRook(coordinate* first, coordinate* second, coordinate* move, board* board)
+{
+    printf("trying to move rook x: %i y: %i\n", move->x, move->y);
+    if (move->x == 0 && move->y > 0) //moving up
+    {
+        return tracePath(first, second, move, board, 's', 'u');
+    }
+    else if (move->x > 0 && move->y == 0) //moving right
+    {
+        return tracePath(first, second, move, board, 's', 'r');
+    }
+    else if (move->x == 0 && move->y < 0) //moving down
+    {
+        return tracePath(first, second, move, board, 's', 'd');
+    }
+    else if (move->x < 0 && move->y == 0) //moving left
+    {
+        return tracePath(first, second, move, board, 's', 'l');
+    }
+}
+
+//checks path of pieces like bishop, rook and queen that have multiple squares they can occupy. 
+//
+bool pathIsValid(coordinate* first, coordinate* second, coordinate* move, board* board)
+{
+    switch(board->boardMatrix[first->x][first->y]->display)
+    {
+        case 'r' :
+            if (!pathCheckRook(first, second, move, board))
+            {
+                puts("Trying to move rook through other piece!");
+                return false;
+            }
+            return true;
+        case 'b' :
+            return true;
+        case 'q' :
+            return true;
+        default :
+            return true;
+    }
+}
+
 void makeMove(coordinate* first, coordinate* second, board* board, bool currentBeenMoved)
 {
     buildPiece(board, board->boardMatrix[first->x][first->y]->display, second->x, second->y, board->boardMatrix[first->x][first->y]->side); //overwrite destination with the piece at original position
@@ -171,9 +333,8 @@ bool moveIsValid(coordinate* first, coordinate* second, coordinate* move, board*
     //different piece of same side is on destination square
     
     if (second->x < 0 || second->x > 7 || second->y < 0 || second->y > 7) {return false;}
-
-    if (board->boardMatrix[first->x][first->y]->side == board->boardMatrix[second->x][second->y]->side)
-        return false;
+    if (!pathIsValid(first, second, move, board)) {return false;}
+    if (board->boardMatrix[first->x][first->y]->side == board->boardMatrix[second->x][second->y]->side) {return false;}
     
     //castling
     //pawn move 2 vs 1
