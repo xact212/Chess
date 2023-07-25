@@ -33,13 +33,12 @@ bool checkInputSyntax(char* input)
     bool firstCoordinateCondition = (input[0] == '(' && (atoi(&input[1]) > 0 && atoi(&input[1]) < 9)  && input[2] == ',' && 
     (atoi(&input[3]) > 0 && atoi(&input[3]) < 9) && input[4] == ')');
     inputValid = check(firstCoordinateCondition, "first coordinate good", "first coordinate bad, please re-enter move");
-    
+    if (!inputValid) {return false;}
+
     //second coordinate syntax evalutaion, expecting: _(x2,y2)
     bool secondCoordinateCondition = (input[5] == '_' && input[6] == '(' && (atoi(&input[7]) > 0 && atoi(&input[7]) < 9)  && input[8] == ',' && 
     (atoi(&input[9]) > 0 && atoi(&input[9]) < 9) && input[10] == ')');
-    inputValid = check(secondCoordinateCondition, "second coordinate good", "second coordinate bad, please re-enter move");
-
-    return inputValid;
+    return check(secondCoordinateCondition, "second coordinate good", "second coordinate bad, please re-enter move");
 }
 
 //conditionally loop through all squares in current direction and return false if a space is not an
@@ -230,6 +229,7 @@ bool pathCheckBishop(coordinate* first, coordinate* second, coordinate* move, bo
     {
         return tracePath(first, second, move, board, 'd', 'a');
     }
+    return true; //for queen, uses function but doesn't neccesarily move on two axis at a time
 }
 
 bool pathCheckRook(coordinate* first, coordinate* second, coordinate* move, board* board)
@@ -251,6 +251,7 @@ bool pathCheckRook(coordinate* first, coordinate* second, coordinate* move, boar
     {
         return tracePath(first, second, move, board, 's', 'l');
     }
+    return true; //for queen, uses function but doesn't neccesarily move on one axis at a time
 }
 
 //checks path of pieces like bishop, rook and queen that have multiple squares they can occupy. 
@@ -260,15 +261,28 @@ bool pathIsValid(coordinate* first, coordinate* second, coordinate* move, board*
     switch(board->boardMatrix[first->x][first->y]->display)
     {
         case 'r' :
+        {
             if (!pathCheckRook(first, second, move, board))
             {
                 puts("Trying to move rook through other piece!");
                 return false;
             }
             return true;
+        }
+            
         case 'b' :
+            if (!pathCheckBishop(first, second, move, board))
+            {
+                puts("Trying to move bishop through other piece!");
+                return false;
+            }
             return true;
-        case 'q' :
+        case 'q' : //a queen is really just a combination of a rook and a bishop, so refactoring into different function is uneccesary
+            if (!pathCheckRook(first, second, move, board) || !pathCheckBishop(first, second, move, board))
+            {
+                puts("Trying to move queen through other piece!");
+                return false;
+            }
             return true;
         default :
             return true;
@@ -414,6 +428,7 @@ bool moveIsValid(coordinate* first, coordinate* second, coordinate* move, board*
         if (!checkPawn(first, second, move, board)) 
             return false;
     }
+
     //en passant
     //promotion
     //pawns (is first move for 2 space, has enemy diagonal for captures)
@@ -472,8 +487,9 @@ bool moveCausesCheck(coordinate* first, coordinate* second, board* board, char c
 {
     //assume all other checks have been made first, always put this last in checking order
     //make move
-    coordinate* captureList[50];
-    for (int i = 0; i < 50; i++) {captureList[i] = buildCoordinate(0,0);}
+    int captureListLen = 56;
+    coordinate* captureList[captureListLen];
+    for (int i = 0; i < captureListLen; i++) {captureList[i] = buildCoordinate(0,0);}
     int currMoveX = 0;
     int currMoveY = 0;
     //need to know this information so we can undo the move if needed
@@ -521,7 +537,7 @@ bool moveCausesCheck(coordinate* first, coordinate* second, board* board, char c
                         makeMove(second, first, board, currentBeenMoved); //move whatever is at destination square back
                         buildPiece(board, secondDisplay, second->x, second->y, secondSide); //make copy of what used to be at second at second square again
                         board->boardMatrix[second->x][second->y]->hasBeenMoved = secondhasBeenMoved;
-                        for (int space = 0; space < 50; space++){free(captureList[space]);}
+                        for (int space = 0; space < captureListLen; space++){free(captureList[space]);}
                         printf("Move puts king in check\n");
                         return true;
                     }
@@ -530,7 +546,7 @@ bool moveCausesCheck(coordinate* first, coordinate* second, board* board, char c
             
         }
     }
-    for (int space = 0; space < 50; space++){free(captureList[space]);}
+    for (int space = 0; space < captureListLen; space++){free(captureList[space]);}
     printf("Move does not put king in check\n");
     printf("Keeping move? %i\n", keepMove);
     if (!keepMove) 
@@ -562,9 +578,9 @@ void gameLoop(char startingSide, board* mainBoard)
             break;
         }
          
-        if (checkInputSyntax(input) == false)
+        if (!checkInputSyntax(input))
             continue;
-        first->x = atoi(&input[1]) - 1; //reassign coordinates 
+        first->x = atoi(&input[1]) - 1; //reassign coordinat`es 
         first->y = atoi(&input[3]) - 1;
         second->x = atoi(&input[7]) - 1; //reassign coordinates
         second->y = atoi(&input[9]) - 1;

@@ -1,11 +1,11 @@
 #include "rook.h"
 #include <stdlib.h>
-#include <stdio.h>
 
 rook* buildRook(char side) {
     rook* myRook = malloc(sizeof(rook) * 2);
     myRook->display = 'r';
     myRook->side = side;
+    myRook->hasBeenMoved = false;
     myRook->movesLen = 28; //7 squares in one direction max * 4 directions = 28 moves
     coordinate** moves = malloc(myRook->movesLen * sizeof(coordinate*));
     for (int i = 0; i < 7; i++) { //left
