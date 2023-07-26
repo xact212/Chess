@@ -16,5 +16,5 @@ void initBoardMatrix(board* board, char side);
 
 void freeBoard(board* board);
 
-void buildPiece(board* board, char *piece, int x, int y, char side);
+void buildPiece(board* board, char piece, int x, int y, char side);
 #endif

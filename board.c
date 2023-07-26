@@ -1,10 +1,16 @@
 #include "board.h"
 #include "openSpace.h"
 #include "pawn.h"
+#include "king.h"
+#include "rook.h"
+#include "bishop.h"
+#include "queen.h"
+#include "knight.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+
 
 board* buildBoard(int width, int height)
 {
@@ -35,10 +41,15 @@ void printBoard(board* board)
     {
         for (int j = 0; j < board->height; j++)
         {
+            if (j == 0)
+            {
+                printf("%i ", i + 1);
+            }
             printf("%c%c ",board->boardMatrix[j][i]->side, board->boardMatrix[j][i]->display);
         }
         printf("\n");
     }
+    printf("   a  b  c  d  e  f  g  h\n");
 }
 
 void freeBoard(board* board)
@@ -66,24 +77,34 @@ void freeBoard(board* board)
     }
 }
 
-void buildPiece(board* board, char *piece, int x, int y, char side) //allows each piece's data to be properly accessed externally
+void buildPiece(board* board, char piece, int x, int y, char side) //allows each piece's data to be properly accessed externally
 {
     freeOpenSpace(board->boardMatrix[x][y]);
-    if (strcmp(piece, "pawn") == 0)
-    {
-        board->boardMatrix[x][y] = buildPawn(side);
-        return;
-    }
-    else if (strcmp(piece, "openSpace") == 0)
-    {
-        board->boardMatrix[x][y] = buildOpenSpace(side);
-        return;
-    }
-    else    
-    {
-        printf("No piece specified, creating open space");
-        board->boardMatrix[x][y] = buildOpenSpace(side);
-        return;
+    switch (piece) {
+        case 'p' :
+            board->boardMatrix[x][y] = buildPawn(side);
+            break;
+        case 'X' :
+            board->boardMatrix[x][y] = buildOpenSpace(side);
+            break;
+        case 'k' :
+            board->boardMatrix[x][y] = buildKing(side);
+            break;
+        case 'r' :
+            board->boardMatrix[x][y] = buildRook(side);
+            break;
+        case 'B' :
+            board->boardMatrix[x][y] = buildBishop(side);
+            break;
+        case 'q' :
+            board->boardMatrix[x][y] = buildQueen(side);
+            break;
+        case 'K' :
+            board->boardMatrix[x][y] = buildKnight(side);
+            break; 
+        default: 
+            puts("No piece specified, creating open space");
+            board->boardMatrix[x][y] = buildOpenSpace(side);
     }
 }
 

@@ -19,7 +19,7 @@ void freeOpenSpace(openSpace* openSpace)
 {
     if (openSpace->moves[0] != NULL)
     {
-        for (int i = 0; i < (sizeof(openSpace->moves) / sizeof(coordinate*)) + 1; i++)
+        for (int i = 0; i < openSpace->movesLen; i++)
         free(openSpace->moves[i]);
     }
     free(openSpace->moves);

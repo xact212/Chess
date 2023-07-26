@@ -1,7 +1,7 @@
 #ifndef COORDINATE_H
 #define COORDINATE_H
 
-typedef struct{
+typedef struct coordinate{
     int x;
     int y;
 }coordinate;
